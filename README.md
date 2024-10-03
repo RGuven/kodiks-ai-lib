@@ -43,7 +43,7 @@ poetry publish -r kodiks-ai-lib
 5. Install from TestPyPI
 
 ```
-pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple  skipper-lib
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple  kodiks-ai-lib
 ```
 
 6. Publish to PyPI
@@ -55,7 +55,7 @@ poetry publish
 7. Install from PyPI
 
 ```
-pip install skipper-lib
+pip install kodiks-ai-lib
 ```
 
 8. Test imported library from CMD
