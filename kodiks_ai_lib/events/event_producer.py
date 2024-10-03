@@ -1,7 +1,8 @@
-import pika
-import uuid
-import requests
 import json
+import uuid
+
+import pika
+import requests
 
 
 class EventProducer(object):
@@ -9,19 +10,15 @@ class EventProducer(object):
         self.service_name = service_name
         self.logger = logger
         self.credentials = pika.PlainCredentials(username, password)
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,
-                                                                            port=port,
-                                                                            credentials=self.credentials))
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=host, port=port, credentials=self.credentials)
+        )
         self.channel = self.connection.channel()
 
-        result = self.channel.queue_declare(queue='', exclusive=True)
+        result = self.channel.queue_declare(queue="", exclusive=True)
         self.callback_queue = result.method.queue
 
-        self.channel.basic_consume(
-            queue=self.callback_queue,
-            on_message_callback=self.on_response,
-            auto_ack=True
-        )
+        self.channel.basic_consume(queue=self.callback_queue, on_message_callback=self.on_response, auto_ack=True)
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
@@ -34,54 +31,50 @@ class EventProducer(object):
         try:
             queue_state = self.channel.queue_declare(queue_name, passive=True, durable=True)
             if queue_state.method.consumer_count == 0:
-                self.logger_helper(self.corr_id, queue_name, self.service_name, self.logger, 'start',
-                                   'No subscriber available')
+                self.logger_helper(
+                    self.corr_id, queue_name, self.service_name, self.logger, "start", "No subscriber available"
+                )
 
-                response = {
-                    'error': 'No subscriber available'
-                }
+                response = {"error": "No subscriber available"}
                 result = json.dumps(response)
 
                 return result
         except Exception as e:
-            self.logger_helper(self.corr_id, queue_name, self.service_name, self.logger, 'start',
-                               'No subscriber available')
+            self.logger_helper(
+                self.corr_id, queue_name, self.service_name, self.logger, "start", f"No subscriber available {e}"
+            )
 
-            response = {
-                'error': 'No subscriber available'
-            }
+            response = {"error": "No subscriber available"}
             result = json.dumps(response)
 
             return result
 
-        self.logger_helper(self.corr_id, queue_name, self.service_name, self.logger, 'start', '-')
+        self.logger_helper(self.corr_id, queue_name, self.service_name, self.logger, "start", "-")
 
         self.channel.basic_publish(
-            exchange='',
+            exchange="",
             routing_key=queue_name,
-            properties=pika.BasicProperties(
-                reply_to=self.callback_queue,
-                correlation_id=self.corr_id
-            ),
-            body=payload
+            properties=pika.BasicProperties(reply_to=self.callback_queue, correlation_id=self.corr_id),
+            body=payload,
         )
 
         while self.response is None:
             self.connection.process_data_events()
 
-        self.logger_helper(self.corr_id, queue_name, self.service_name, self.logger, 'end', '-')
+        self.logger_helper(self.corr_id, queue_name, self.service_name, self.logger, "end", "-")
 
         return self.response
 
     def logger_helper(self, corr_id, queue_name, service_name, logger, task_type, description):
         if self.logger is not None:
-            params = {"correlation_id": corr_id,
-                      "queue_name": queue_name,
-                      "service_name": service_name,
-                      "task_type": task_type,
-                      "description": description
-                      }
+            params = {
+                "correlation_id": corr_id,
+                "queue_name": queue_name,
+                "service_name": service_name,
+                "task_type": task_type,
+                "description": description,
+            }
             try:
                 requests.post(logger, json=params)
             except requests.exceptions.RequestException as e:
-                print('Logger service is not available')
+                print(f"Logger service is not available {e}")

@@ -10,14 +10,12 @@ class ExchangeReceiver(object):
         self.logger = logger
 
         credentials = pika.PlainCredentials(username, password)
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=host,
-                                                                       port=port,
-                                                                       credentials=credentials))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port, credentials=credentials))
 
         channel = connection.channel()
         channel.exchange_declare(exchange=self.exchange, exchange_type=exchange_type)
 
-        result = channel.queue_declare(queue='', exclusive=True)
+        result = channel.queue_declare(queue="", exclusive=True)
         queue_name = result.method.queue
 
         channel.queue_bind(exchange=self.exchange, queue=queue_name)
@@ -30,27 +28,29 @@ class ExchangeReceiver(object):
         service_instance = self.service_worker()
 
         if self.logger is not None:
-            params = {"correlation_id": '-',
-                      "queue_name": self.exchange,
-                      "service_name": self.service_name,
-                      "task_type": 'start'
-                      }
+            params = {
+                "correlation_id": "-",
+                "queue_name": self.exchange,
+                "service_name": self.service_name,
+                "task_type": "start",
+            }
             try:
                 requests.post(self.logger, json=params)
             except requests.exceptions.RequestException as e:
-                print('Logger service is not available')
+                print("Logger service is not available")
 
         response, task_type = service_instance.call(body)
 
         if self.logger is not None:
-            params = {"correlation_id": '-',
-                      "queue_name": self.exchange,
-                      "service_name": self.service_name,
-                      "task_type": 'end'
-                      }
+            params = {
+                "correlation_id": "-",
+                "queue_name": self.exchange,
+                "service_name": self.service_name,
+                "task_type": "end",
+            }
             try:
                 requests.post(self.logger, json=params)
             except requests.exceptions.RequestException as e:
-                print('Logger service is not available')
+                print("Logger service is not available")
 
-        print('Processed request:', task_type)
+        print("Processed request:", task_type)
