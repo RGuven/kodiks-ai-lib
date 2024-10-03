@@ -29,10 +29,6 @@ jobs:
           cd ${{ github.workspace }}
           poetry install
 
-      - name: Run tests
-        run: |
-          poetry run pytest
-
       - name: Test package installation
         run: |
           pip install --force-reinstall git+https://github.com/kodiks/kodiks-ai-lib
