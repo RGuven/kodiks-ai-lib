@@ -48,7 +48,7 @@ class EventReceiver(object):
             print("Processed request:", task_type)
         except Exception as e:
             response = {
-                "error": "Receiver exception",
+                "error": f"Receiver exception {e}",
                 "queue": self.queue_name,
                 "service_name": self.service_name,
                 "correlation_id": props.correlation_id,
@@ -80,4 +80,4 @@ class EventReceiver(object):
             try:
                 requests.post(logger, json=params)
             except requests.exceptions.RequestException as e:
-                print("Logger service is not available")
+                print(f"Logger service is not available {e}")

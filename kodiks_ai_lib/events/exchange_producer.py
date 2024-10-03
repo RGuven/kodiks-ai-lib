@@ -1,5 +1,6 @@
-import pika
 import uuid
+
+import pika
 import requests
 
 
@@ -32,7 +33,7 @@ class ExchangeProducer(object):
             try:
                 requests.post(self.logger, json=params)
             except requests.exceptions.RequestException as e:
-                print("Logger service is not available")
+                print(f"Logger service is not available {e}")
 
         channel.basic_publish(exchange=exchange, routing_key="", body=payload)
         connection.close()
@@ -47,4 +48,4 @@ class ExchangeProducer(object):
             try:
                 requests.post(self.logger, json=params)
             except requests.exceptions.RequestException as e:
-                print("Logger service is not available")
+                print(f"Logger service is not available {e}")
