@@ -103,4 +103,4 @@ from kodiks_ai_lib.events.event_producer import EventProducer
 
 ## License
 
-Licensed under the Apache License, Version 2.0. Copyright 2024-2024 Kodiks AI, [Copy of the license](https://github.com/kodiks/kodiks-ai-lib/blob/master/LICENSE).
+Licensed under the Apache License, Version 2.0. Copyright 2024-2025 Kodiks AI, [Copy of the license](https://github.com/kodiks/kodiks-ai-lib/blob/master/LICENSE).
