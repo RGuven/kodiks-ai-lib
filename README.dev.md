@@ -24,6 +24,23 @@ To format and check your code using `pre-commit`, follow these steps:
     pre-commit run --all-files
     ```
 
+## Running Tests
+
+    This project uses `pytest` for running unit tests. Follow the steps below to run the tests locally.
+
+```bash
+poetry install --with dev
+```
+
+#### Running the Tests
+```bash
+pytest
+```
+#### Running Specific Tests
+```bash
+pytest kodiks_ai_lib/tests/decorator_timeout_test.py
+```
+
 ## Black and Flake8 Settings
 
 Add the following settings to your `settings.json` file for `Black` and `Flake8`:
