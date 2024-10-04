@@ -33,6 +33,8 @@ poetry install --with dev
 ```
 
 #### Running the Tests
+- -s parameter: This ensures that loguru outputs log messages directly to the console during test execution, making it easier to observe real-time logs. (pytest -s)
+
 ```bash
 pytest
 ```

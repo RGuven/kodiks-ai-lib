@@ -1,13 +1,9 @@
-import logging
 import time
 
 import pytest
+from loguru import logger
 
 from ..decorators.timeout import TimeoutException, timeout  # type: ignore
-
-# Set up logging configuration
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
 
 
 @timeout(seconds=3)
